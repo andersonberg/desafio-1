@@ -1,5 +1,11 @@
 'use strict';
 
+var Projeto = function(name, stars, forks){
+    this.name = name;
+    this.stars = stars;
+    this.forks = forks;
+}
+
 var Github = function(){
     this.public_repos = 0;
     this.count_pages = 0;
@@ -16,18 +22,21 @@ Github.prototype.getReposNames = function(){
     var responseObj = JSON.parse(this.responseText);
     for (var repositorio in responseObj){
         var repo_name = responseObj[repositorio].name;
-        github.repos.push(responseObj[repositorio]);
- 
-        // var request = new XMLHttpRequest();
-        // request.onload = github.printStarsCount;
-        // var url = 'https://api.github.com/repos/globocom/' + repo_name;
-        // request.open('get', url, true);
-        // request.send();
+        var repo_stars = responseObj[repositorio].stargazers_count;
+        var repo_forks = responseObj[repositorio].forks;
+
+        //cria um novo objeto Projeto
+        var repo = new Projeto(repo_name, repo_stars, repo_forks);
+        github.repos.push(repo);
     }
-    github.repos.sort(function(a,b) {return b.stargazers_count - a.stargazers_count});
-    for(var repo in github.repos){
-        console.log(github.repos[repo].name);
-    }
+    github.repos.sort(function(a,b) {return b.stars - a.stars});
+
+    var ul = document.getElementById("repos_list");
+    var items = [];
+    $.each(github.repos, function(i){
+        items.push('<li>' + github.repos[i].name + '</li>');
+        ul.innerHTML = ul.innerHTML + '<li>' + github.repos[i].name + '</li>'; //+ ' : stars: ' + github.repos[i].stars + ' forks: ' + github.repos[i].forks + '</li>'
+    });
 };
 
 Github.prototype.repoCount = function(){
