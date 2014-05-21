@@ -1,10 +1,40 @@
 'use strict';
+var Commit = function(user_login, commit_message, commit_date){
+    this.user_login = user_login;
+    this.commit_message = commit_message;
+    this.commit_date = commit_date;
+};
 
 var Projeto = function(name, stars, forks){
     this.name = name;
     this.stars = stars;
     this.forks = forks;
-}
+    this.commits = [];
+};
+
+Projeto.prototype.getCommits = function(){
+    var url = 'https://api.github.com/repos/globocom/' + this.name + '/commits';
+
+    var request = new XMLHttpRequest();
+    request.onload = setCommits;
+    request.open('get', url, true);
+    request.send();
+};
+
+function setCommits(){
+    var responseObj = JSON.parse(this.responseText);
+    var commits_list = [];
+    for(var i in responseObj){
+        var user_login = responseObj[i].author.login;
+        var commit_message = responseObj[i].commit.message;
+        var commit_date = responseObj[i].commit.author.date;
+
+        var commit = new Commit(user_login, commit_message, commit_date);
+        commits_list.push(commit);
+    }
+
+    return commits_list;
+};
 
 var Github = function(){
     this.public_repos = 0;
@@ -34,8 +64,8 @@ Github.prototype.getReposNames = function(){
     var ul = document.getElementById("repos_list");
     var items = [];
     $.each(github.repos, function(i){
-        items.push('<li>' + github.repos[i].name + '</li>');
-        ul.innerHTML = ul.innerHTML + '<li>' + github.repos[i].name + '</li>'; //+ ' : stars: ' + github.repos[i].stars + ' forks: ' + github.repos[i].forks + '</li>'
+        //items.push('<a href="#"><li>' + github.repos[i].name + '</li></a>');
+        ul.innerHTML = ul.innerHTML + '<a href="#"><li>' + github.repos[i].name + '</li></a>'; //+ ' : stars: ' + github.repos[i].stars + ' forks: ' + github.repos[i].forks + '</li>'
     });
 };
 

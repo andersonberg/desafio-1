@@ -1,0 +1,39 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+h1{
+	font-family:"HelveticaNeue", "Helvetica Neue", Helvetica, sans-serif;
+	font-size:60px;
+}
+
+a{
+	text-decoration: none;
+	color: white;
+}
+
+ul
+{
+    list-style-type: none;
+}
+
+li{
+	margin: 15px;
+}
+
+#github-projects{
+	padding-left: 45px;
+	padding-right: 25px;
+	float: left;
+	position: relative;
+	font-family: Arial, sans-serif;
+	font-size: 20px;
+	background-color: #4169E1;
+	color: white;
+	text-align:right;
+}
+
+#commits{
+	background-color: white;
+}
