@@ -27,13 +27,17 @@ h1{
 	padding-right: 25px;
 }
 
+h2{
+	font-family:"HelveticaNeue", "Helvetica Neue", Helvetica, sans-serif;
+	font-size:24px;
+	padding-left: 5px;
+}
+
 a{
 	text-decoration: none;
 	color: white;
 	padding-right: 15px;
 }
-
-
 
 .sel a:hover:after {
     width: 0; 
@@ -57,4 +61,17 @@ a{
 
 #commits{
 	background-color: white;
+}
+
+#stars, #forks{
+	float: left;
+	padding: 25px;
+}
+
+#stars{
+	padding-right: 70px;
+}
+
+#status{
+	display: none;
 }
