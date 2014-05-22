@@ -65,7 +65,7 @@ Github.prototype.getReposNames = function(){
     var items = [];
     $.each(github.repos, function(i){
         //items.push('<a href="#"><li>' + github.repos[i].name + '</li></a>');
-        ul.innerHTML = ul.innerHTML + '<a href="#"><li>' + github.repos[i].name + '</li></a>'; //+ ' : stars: ' + github.repos[i].stars + ' forks: ' + github.repos[i].forks + '</li>'
+        ul.innerHTML = ul.innerHTML + '<li class="sel"> <a href="#">' + github.repos[i].name + '</a></li>'; //+ ' : stars: ' + github.repos[i].stars + ' forks: ' + github.repos[i].forks + '</li>'
     });
 };
 
