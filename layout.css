@@ -49,9 +49,14 @@ a{
 	border-right: 10px solid #FFFFFF;
 }
 
+#conteudo{
+	margin: 0 auto;
+}
+
 #github-projects{
-	padding-left: 45px;
+	/*padding-left: 0;*/
 	/*padding-right: 25px;*/
+	width: 50%;
 	float: left;
 	position: relative;
 	font-family: Arial, sans-serif;
@@ -64,6 +69,7 @@ a{
 #commits{
 	background-color: white;
 	float: left;
+	padding-left: 25px;
 }
 
 #stars, #forks{
