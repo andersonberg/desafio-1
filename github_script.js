@@ -2,11 +2,27 @@
 
 var repo_commits = [];
 
+function showMore(){
+    $('#list_commits li:hidden').slice(0,20).show();
+    if($('#list_commits li').length == $('#list_commits li:visible').length){
+        $('#carrega_mais').hide();
+    }
+};
+
+function formatDate(date) {
+  var newDate = new Date(date);
+  var year = newDate.getFullYear().toString();
+  var month = (newDate.getMonth()+1).toString();
+  var day = newDate.getDate().toString();
+
+  return (day[1]?day:"0"+day[0]) + '/' + (month[1]?month:"0"+month[0]) + '/' + year;
+}
+
 //função que é chamada ao clicar no nome de um repositório
 function stats(){
     var ul_commits = document.getElementById("list_commits");
     ul_commits.innerHTML = "";
-    
+
     github.repos.filter(github.findProject, this);
 };
 
@@ -56,9 +72,10 @@ function showCommits(commits_list){
     ul_commits.innerHTML = "";
 
     for(var comm in commits_list){
-        ul_commits.innerHTML = ul_commits.innerHTML + '<li><div class="li_commit"><h1>' + commits_list[comm].commit_message + '</h1><h2>@' + commits_list[comm].user_login + '</h2></div></li>';    
+        ul_commits.innerHTML = ul_commits.innerHTML + '<li><div class="li_commit"><h1>' + commits_list[comm].commit_message + '</h1><h3>'+ formatDate(commits_list[comm].commit_date) +'</h3><h2>@' + commits_list[comm].user_login + '</h2></div></li>';    
     }
-    
+
+    ul_commits.innerHTML = ul_commits.innerHTML + '<a id="carrega_mais" class="carrega_mais" href="#" onclick="showMore.call();return false;">Carregar mais</a>';
 };
 
 //Classe Github representa um objeto que centraliza as informações de todos os repositórios
