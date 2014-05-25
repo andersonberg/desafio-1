@@ -4,6 +4,9 @@ var repo_commits = [];
 
 //função que é chamada ao clicar no nome de um repositório
 function stats(){
+    var ul_commits = document.getElementById("list_commits");
+    ul_commits.innerHTML = "";
+    
     github.repos.filter(github.findProject, this);
 };
 
@@ -45,12 +48,17 @@ function setCommits(){
         commits_list.push(commit);
         // repo_commits.push(commit);
     }
-    var list_commits = document.getElementById("list_commits");
-    list_commits.innerHTML = "";
+    showCommits(commits_list);
+};
+
+function showCommits(commits_list){
+    var ul_commits = document.getElementById("list_commits");
+    ul_commits.innerHTML = "";
 
     for(var comm in commits_list){
-        list_commits.innerHTML = list_commits.innerHTML + '<li>' + commits_list[comm].user_login + ' ' + commits_list[comm].commit_message + '</li>';
+        ul_commits.innerHTML = ul_commits.innerHTML + '<li><div class="li_commit"><h1>' + commits_list[comm].commit_message + '</h1><h2>@' + commits_list[comm].user_login + '</h2></div></li>';    
     }
+    
 };
 
 //Classe Github representa um objeto que centraliza as informações de todos os repositórios

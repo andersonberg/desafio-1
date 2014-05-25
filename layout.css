@@ -61,18 +61,38 @@ a{
 	text-align:right;
 }
 
-#commits{
+#commits, #status{
 	background-color: white;
+	float: left;
 }
 
 #stars, #forks{
-	float: left;
+	font-family:"HelveticaNeue", "Helvetica Neue", Helvetica, sans-serif;
 	padding: 25px;
+	float: left;
 }
 
 #stars{
 	padding-right: 70px;
 }
 
-#status{
+.li_commit{
+	width: 400px;
+	border: 1px solid #CFCFCF;
+	font-family: Arial, sans-serif;
+	margin-left: 25px;
+}
+
+li h1{
+	font-family: Arial, sans-serif;
+	font-size: 22px;
+	padding-left: 5px;
+	color: #696969;
+}
+
+li h2{
+	font-family: Arial, sans-serif;
+	font-size: 18px;
+	padding-left: 5px;
+	color:#9C9C9C;
 }
