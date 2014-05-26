@@ -1,14 +1,30 @@
 'use strict';
 
-var repo_commits = [];
+//função que é chamada ao clicar no nome de um repositório
+$("#repos_list").on("click", "li a", function(event){
+    //Adiciona a classe 'sel' para adicionar o triângulo
+    //primeiro remove a classe de todos os itens, pra que não apareçam vários triângulos
+    $("#repos_list li").removeClass("sel");
+    var id_element = "#" + this.text;
+    $(id_element).addClass("sel");
 
-function showMore(){
+    var ul_commits = document.getElementById("list_commits");
+    ul_commits.innerHTML = "";
+
+    github.repos.filter(github.findProject, this);
+
+    event.preventDefault();
+});
+
+//funcionalidade do botão "Carregar mais"
+$("#list_commits").on("click", "#carrega_mais", function(){
     $('#list_commits li:hidden').slice(0,20).show();
     if($('#list_commits li').length == $('#list_commits li:visible').length){
         $('#carrega_mais').hide();
     }
-};
+});
 
+//Função que formata a data javascript
 function formatDate(date) {
   var newDate = new Date(date);
   var year = newDate.getFullYear().toString();
@@ -17,14 +33,6 @@ function formatDate(date) {
 
   return (day[1]?day:"0"+day[0]) + '/' + (month[1]?month:"0"+month[0]) + '/' + year;
 }
-
-//função que é chamada ao clicar no nome de um repositório
-function stats(){
-    var ul_commits = document.getElementById("list_commits");
-    ul_commits.innerHTML = "";
-
-    github.repos.filter(github.findProject, this);
-};
 
 //Classe Commit representa cada commit em um repositório
 var Commit = function(user_login, commit_message, commit_date){
@@ -62,7 +70,6 @@ function setCommits(){
 
         var commit = new Commit(user_login, commit_message, commit_date);
         commits_list.push(commit);
-        // repo_commits.push(commit);
     }
     showCommits(commits_list);
 };
@@ -71,11 +78,13 @@ function showCommits(commits_list){
     var ul_commits = document.getElementById("list_commits");
     ul_commits.innerHTML = "";
 
+    //exibe a lista de commits na tela
     for(var comm in commits_list){
         ul_commits.innerHTML = ul_commits.innerHTML + '<li><div class="li_commit"><h1>' + commits_list[comm].commit_message + '</h1><h3>'+ formatDate(commits_list[comm].commit_date) +'</h3><h2>@' + commits_list[comm].user_login + '</h2></div></li>';    
     }
 
-    ul_commits.innerHTML = ul_commits.innerHTML + '<a id="carrega_mais" class="carrega_mais" href="#" onclick="showMore.call();return false;">Carregar mais</a>';
+    //botão "Carregar mais"
+    ul_commits.innerHTML = ul_commits.innerHTML + '<a id="carrega_mais" class="carrega_mais">Carregar mais</a>';
 };
 
 //Classe Github representa um objeto que centraliza as informações de todos os repositórios
@@ -97,11 +106,6 @@ Github.prototype.findProject = function(element){
     }
 };
  
-Github.prototype.printStarsCount = function(){
-    var responseObj = JSON.parse(this.responseText);
-    console.log(responseObj.name + ' possui ' + responseObj.stargazers_count + ' estrelas');
-};
- 
 Github.prototype.getReposNames = function(){
     var responseObj = JSON.parse(this.responseText);
     for (var repositorio in responseObj){
@@ -115,11 +119,10 @@ Github.prototype.getReposNames = function(){
     }
     github.repos.sort(function(a,b) {return b.stars - a.stars});
 
+    //exibe a lista de itens na tela
     var ul = document.getElementById("repos_list");
-    //var items = [];
     $.each(github.repos, function(i){
-        //items.push('<a href="#"><li>' + github.repos[i].name + '</li></a>');
-        ul.innerHTML = ul.innerHTML + '<li class="sel"> <a onclick="stats.call(this);return false;">' + github.repos[i].name + '</a></li>';
+        ul.innerHTML = ul.innerHTML + '<li id="' + github.repos[i].name + '"><a>' + github.repos[i].name + '</a></li>';
     });
 };
 
