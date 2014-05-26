@@ -9,7 +9,7 @@ li {
     margin-bottom: 15px;
 }
 
-li a:after {
+.sel a:after {
     content:"";
     position:absolute;
     top:12%;
@@ -40,8 +40,8 @@ a{
 	padding-right: 15px;
 }
 
-.sel a:hover:after,
-	 a:active:after {
+.sel a:visited::after,
+	 a:hover::after {
     width: 0; 
 	height: 0; 
 	border-top: 10px solid transparent;
@@ -83,7 +83,7 @@ a{
 }
 
 .li_commit{
-	width: 400px;
+	width: 500px;
 	border: 1px solid #CFCFCF;
 	font-family: Arial, sans-serif;
 }
