@@ -76,28 +76,26 @@ Projeto.prototype.countCommits = function(){
 
 //Obtém todos os commits de um repositório
 Projeto.prototype.getCommits = function(){
-    alert(this.commits_count);
-    var url = 'https://api.github.com/repos/globocom/' + this.name + '/commits?login=andersonberg&authToken=f94236ae56d6c2325123261daf99c439e8d2cd66';
+    var url = 'https://api.github.com/repos/globocom/' + this.name + '/commits?login=andersonberg&authToken=f94236ae56d6c2325123261daf99c439e8d2cd66&page=1&per_page=100';
 
     var request = new XMLHttpRequest();
-    request.onload = setCommits;
+    
+    //Cria objetos Commit e popula a lista de commits de um repositório
+    request.onload = function(){
+        var responseObj = JSON.parse(this.responseText);
+        var commits_list = [];
+        for(var i in responseObj){
+            var user_login = responseObj[i].author.login;
+            var commit_message = responseObj[i].commit.message;
+            var commit_date = responseObj[i].commit.author.date;
+
+            var commit = new Commit(user_login, commit_message, commit_date);
+            commits_list.push(commit);
+        }
+        showCommits(commits_list);
+    };
     request.open('get', url, true);
     request.send();
-};
-
-//Cria objetos Commit e popula a lista de commits de um repositório
-function setCommits(){
-    var responseObj = JSON.parse(this.responseText);
-    var commits_list = [];
-    for(var i in responseObj){
-        var user_login = responseObj[i].author.login;
-        var commit_message = responseObj[i].commit.message;
-        var commit_date = responseObj[i].commit.author.date;
-
-        var commit = new Commit(user_login, commit_message, commit_date);
-        commits_list.push(commit);
-    }
-    showCommits(commits_list);
 };
 
 function showCommits(commits_list){
