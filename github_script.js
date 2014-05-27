@@ -13,6 +13,9 @@ $("#repos_list").on("click", "li a", function(event){
 
     github.repos.filter(github.findProject, this);
 
+    var newUrl = "/desafio/" + this.text;
+    window.history.pushState({}, "", newUrl);
+
     event.preventDefault();
 });
 
