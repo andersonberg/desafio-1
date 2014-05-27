@@ -37,6 +37,7 @@ function formatDate(date) {
   return (day[1]?day:"0"+day[0]) + '/' + (month[1]?month:"0"+month[0]) + '/' + year;
 }
 
+//---------------------- Classe Commit--------------------------------
 //Classe Commit representa cada commit em um repositório
 var Commit = function(user_login, commit_message, commit_date){
     this.user_login = user_login;
@@ -49,11 +50,33 @@ var Projeto = function(name, stars, forks){
     this.name = name;
     this.stars = stars;
     this.forks = forks;
+    this.commits_count = 0;
     this.commits = [];
 };
 
+Projeto.prototype.countCommits = function(){
+    var url = 'https://api.github.com/repos/globocom/' + this.name + '/stats/contributors?login=andersonberg&authToken=f94236ae56d6c2325123261daf99c439e8d2cd66'
+    var commits_count = 0;
+    var request = new XMLHttpRequest();
+    var that = this;
+    request.onload = function(){
+        var responseObj = JSON.parse(this.responseText);
+        for (var i in responseObj){
+            for(var w in responseObj[i].weeks){
+                commits_count = commits_count + responseObj[i].weeks[w].c;        
+            }
+        }
+        that.commits_count = commits_count;
+        // alert(commits_count);
+    };
+
+    request.open('get', url, true);
+    request.send();
+}
+
 //Obtém todos os commits de um repositório
 Projeto.prototype.getCommits = function(){
+    alert(this.commits_count);
     var url = 'https://api.github.com/repos/globocom/' + this.name + '/commits?login=andersonberg&authToken=f94236ae56d6c2325123261daf99c439e8d2cd66';
 
     var request = new XMLHttpRequest();
@@ -105,6 +128,7 @@ Github.prototype.findProject = function(element){
     if(element.name == this.text){
         stars.innerHTML = "stars: " + element.stars;
         forks.innerHTML = "forks: " + element.forks;
+        element.countCommits();
         element.getCommits();
     }
 };
