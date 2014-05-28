@@ -1,5 +1,8 @@
 'use strict';
 
+var login = "andersonberg";
+var token = "f94236ae56d6c2325123261daf99c439e8d2cd66";
+
 //função que é chamada ao clicar no nome de um repositório
 $("#repos_list").on("click", "li a", function(event){
     //Adiciona a classe 'sel' para adicionar o triângulo
@@ -54,32 +57,12 @@ var Projeto = function(name, stars, forks){
     this.commits = [];
 };
 
-Projeto.prototype.countCommits = function(){
-    var url = 'https://api.github.com/repos/globocom/' + this.name + '/stats/contributors?login=andersonberg&authToken=f94236ae56d6c2325123261daf99c439e8d2cd66'
-    var commits_count = 0;
-    var request = new XMLHttpRequest();
-    var that = this;
-    request.onload = function(){
-        var responseObj = JSON.parse(this.responseText);
-        for (var i in responseObj){
-            for(var w in responseObj[i].weeks){
-                commits_count = commits_count + responseObj[i].weeks[w].c;        
-            }
-        }
-        that.commits_count = commits_count;
-        // alert(commits_count);
-    };
-
-    request.open('get', url, true);
-    request.send();
-}
-
 //Obtém todos os commits de um repositório
 Projeto.prototype.getCommits = function(){
-    var url = 'https://api.github.com/repos/globocom/' + this.name + '/commits?login=andersonberg&authToken=f94236ae56d6c2325123261daf99c439e8d2cd66&page=1&per_page=100';
+    var url = 'https://api.github.com/repos/globocom/' + this.name + '/commits?login=' + login + '&authToken=' + token + '&page=1&per_page=100';
 
     var request = new XMLHttpRequest();
-    
+
     //Cria objetos Commit e popula a lista de commits de um repositório
     request.onload = function(){
         var responseObj = JSON.parse(this.responseText);
@@ -126,29 +109,8 @@ Github.prototype.findProject = function(element){
     if(element.name == this.text){
         stars.innerHTML = "stars: " + element.stars;
         forks.innerHTML = "forks: " + element.forks;
-        element.countCommits();
         element.getCommits();
     }
-};
- 
-Github.prototype.getReposNames = function(){
-    var responseObj = JSON.parse(this.responseText);
-    for (var repositorio in responseObj){
-        var repo_name = responseObj[repositorio].name;
-        var repo_stars = responseObj[repositorio].stargazers_count;
-        var repo_forks = responseObj[repositorio].forks;
-
-        //cria um novo objeto Projeto
-        var repo = new Projeto(repo_name, repo_stars, repo_forks);
-        github.repos.push(repo);
-    }
-    github.repos.sort(function(a,b) {return b.stars - a.stars});
-
-    //exibe a lista de itens na tela
-    var ul = document.getElementById("repos_list");
-    $.each(github.repos, function(i){
-        ul.innerHTML = ul.innerHTML + '<li id="' + github.repos[i].name + '"><a>' + github.repos[i].name + '</a></li>';
-    });
 };
 
 Github.prototype.repoCount = function(){
@@ -161,16 +123,40 @@ Github.prototype.repoCount = function(){
  
     //varre todas as paginas e pega o nome de cada repositorio
     for(var i = 1; i <= github.count_pages; i++){
-        var request = new XMLHttpRequest();
-        request.onload = github.getReposNames;
-        var url = 'https://api.github.com/users/globocom/repos?page=' + i + '&per_page=100';
-        request.open('get', url, true);
-        request.send();
+        (function(i){
+            var request = new XMLHttpRequest();
+            var url = 'https://api.github.com/users/globocom/repos?page=' + i + '&per_page=100&login=' + login + '&authToken=' + token;
+            request.open('get', url, true);
+            request.onload = function(){
+                var responseObj = JSON.parse(this.responseText);
+                for (var repositorio in responseObj){
+                    var repo_name = responseObj[repositorio].name;
+                    var repo_stars = responseObj[repositorio].stargazers_count;
+                    var repo_forks = responseObj[repositorio].forks;
+
+                    //cria um novo objeto Projeto
+                    var repo = new Projeto(repo_name, repo_stars, repo_forks);
+                    github.repos.push(repo);
+                }
+
+                //verifica se a lista de repositórios está completa
+                if(github.repos.length == github.public_repos){
+                    github.repos.sort(function(a,b) {return b.stars - a.stars});
+
+                    //exibe a lista de itens na tela
+                    var ul = document.getElementById("repos_list");
+                    $.each(github.repos, function(i){
+                        ul.innerHTML = ul.innerHTML + '<li id="' + github.repos[i].name + '"><a>' + github.repos[i].name + '</a></li>';
+                    });
+                }
+            };
+            request.send();
+        })(i);
     }
 };
 
 var request = new XMLHttpRequest();
 var github = new Github();
 request.onload = github.repoCount;
-request.open('get', 'https://api.github.com/users/globocom?login=andersonberg&authToken=f94236ae56d6c2325123261daf99c439e8d2cd66', true);
+request.open('get', 'https://api.github.com/users/globocom?login=' + login + '&authToken=' + token, true);
 request.send();
